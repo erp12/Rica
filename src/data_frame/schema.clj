@@ -8,15 +8,16 @@
 
   Example
   (schema :name String :age Long)"
-  [& args]
-  (doseq [i (range (count args))]
-    (let [el (nth args i)]
-      (if (zero? (mod i 2))
-        (if (not (keyword? el))
-          (throw (Exception. "Schema attribute names must be keywords.")))
-        (if (not (instance? Class el))
-          (throw (Exception. "Schema attribute names must be associated with a Class."))))))
-  (apply ordered-map args))
+  [col-name col-type & args]
+  (let [all-args (concat [col-name col-type] args)]
+    (doseq [i (range (count all-args))]
+      (let [el (nth all-args i)]
+        (if (zero? (mod i 2))
+          (if (not (keyword? el))
+            (throw (Exception. "Schema attribute names must be keywords.")))
+          (if (not (instance? Class el))
+            (throw (Exception. "Schema attribute names must be associated with a Class.")))))))
+  (apply ordered-map col-name col-type args))
 
 
 (defn map-conforms?

@@ -33,11 +33,6 @@
                  (schema :age "String" :name String)))))
 
 
-(deftest new-schema-empty
-  (testing "Create schema with no attributes"
-    (is (= (schema) (ordered-map)))))
-
-
 (deftest map-conforms-to-schema
   (testing "Map which conforms to schema"
     (is (map-conforms? map-data sch))))
@@ -46,11 +41,6 @@
 (deftest map-not-conforms-to-schema
   (testing "Map which does not conform to schema"
     (is (not (map-conforms? {:foo "bar"} sch)))))
-
-
-(deftest empty-map-conforms-to-empty-schema
-  (testing "Empty map conforms to empty schema"
-    (is (map-conforms? {} (schema)))))
 
 
 (deftest vec-conforms-to-schema
@@ -66,8 +56,3 @@
 (deftest vec-not-conforms-to-schema
   (testing "Vector which does not conform to schema (wrong types)"
     (is (not (vec-conforms? ["bar" 24.5 [5 4 3]] sch)))))
-
-
-(deftest empty-map-conforms-to-empty-schema
-  (testing "Empty map conforms to empty schema"
-    (is (vec-conforms? [] (schema)))))

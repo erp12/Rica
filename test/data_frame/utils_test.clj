@@ -43,3 +43,14 @@
 (deftest coll-of-nils-types
   (testing "Return all types in collection of nils"
     (is (= (coll-types [nil nil nil]) #{}))))
+
+
+(deftest rows-to-columns-standard
+  (testing "Return all types in collection of nils"
+    (is (= (rows-to-columns [{:a 1 :b 2} {:a 3 :b 4}])
+           {:b [2 4] :a [1 3]}))))
+
+
+(deftest empty-rows-to-columns
+  (testing "Return all types in collection of nils"
+    (is (= (rows-to-columns []) {}))))
