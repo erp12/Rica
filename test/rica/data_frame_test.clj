@@ -1,9 +1,9 @@
-(ns data-frame.data-frame-test
+(ns rica.data-frame-test
   (:require [clojure.test :refer :all]
             [flatland.ordered.map :refer [ordered-map]]
-            [data-frame.data-frame :refer :all]
-            [data-frame.column :refer [create-column]]
-            [data-frame.schema :refer [schema]]))
+            [rica.data-frame :refer :all]
+            [rica.column :refer [create-column]]
+            [rica.schema :refer [schema]]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;

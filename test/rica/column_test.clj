@@ -1,6 +1,6 @@
-(ns data-frame.column-test
+(ns rica.column-test
   (:require [clojure.test :refer :all]
-            [data-frame.column :refer :all]))
+            [rica.column :refer :all]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;

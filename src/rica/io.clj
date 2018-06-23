@@ -1,7 +1,7 @@
-(ns data-frame.io
-  (:require [data-frame.schema :as sch]
-            [data-frame.column :as col]
-            [data-frame.data-frame :as df]))
+(ns rica.io
+  (:require [rica.schema :as sch]
+            [rica.column :as col]
+            [rica.data-frame :as df]))
 
 
 ; (defn from-csv

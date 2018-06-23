@@ -1,6 +1,6 @@
-(ns data-frame.utils-test
+(ns rica.utils-test
   (:require [clojure.test :refer :all]
-            [data-frame.utils :refer :all]))
+            [rica.utils :refer :all]))
 
 
 (deftest coll-is-of-type

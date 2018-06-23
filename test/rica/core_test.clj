@@ -1,9 +1,9 @@
-(ns data-frame.core-test
+(ns rica.core-test
   (:require [clojure.test :refer :all]
-            [data-frame.core :refer :all]
-            [data-frame.data-frame :as dframe]
-            [data-frame.column :refer [create-column]]
-            [data-frame.schema :refer [schema]]))
+            [rica.core :refer :all]
+            [rica.data-frame :as dframe]
+            [rica.column :refer [create-column]]
+            [rica.schema :refer [schema]]))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1,4 +1,4 @@
-(ns data-frame.core
+(ns rica.core
   "The primary data-frame API offered by Rica. Includes functions for creating
   and manipulating data-frames."
   (:gen-class)
@@ -6,10 +6,10 @@
             [clojure.set :as st]
             [clojure.core.matrix :as matrix]
             [flatland.ordered.map :refer [ordered-map]]
-            [data-frame.schema :as sch]
-            [data-frame.column :as col]
-            [data-frame.data-frame :as dframe]
-            [data-frame.utils :as u]))
+            [rica.schema :as sch]
+            [rica.column :as col]
+            [rica.data-frame :as dframe]
+            [rica.utils :as u]))
 
 
 ;; X to DataFrame

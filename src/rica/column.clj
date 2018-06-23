@@ -1,8 +1,8 @@
-(ns data-frame.column
+(ns rica.column
   "The `column` namespace contains an implementation of a Column data strucutre
   and functions to help create Columns out of other collections.
   A Column is simply a typed PersistentVector that allows nils."
-  (:require [data-frame.utils :as u])
+  (:require [rica.utils :as u])
   (:import (clojure.lang IPersistentVector)))
 
 

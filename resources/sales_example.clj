@@ -1,4 +1,4 @@
-(require '[data-frame.core :refer :all])
+(require '[rica.core :refer :all])
 
 (def sales
   (create-data-frame

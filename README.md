@@ -21,7 +21,7 @@ Rica has not been put on Clojars yet.
 The `create-data-frame` function can create data-frames in a way that is similar to maps. Every other argument is a keyword that denotes a column name. The following argument is a collection (list of vector) denoting the values stored in that column.
 
 ```clojure
-(require '[data-frame.core :refer :all])
+(require '[rica.core :refer :all])
 ; nil
 
 (def df

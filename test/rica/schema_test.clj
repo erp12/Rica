@@ -1,6 +1,6 @@
-(ns data-frame.schema-test
+(ns rica.schema-test
   (:require [clojure.test :refer :all]
-            [data-frame.schema :refer :all]
+            [rica.schema :refer :all]
             [flatland.ordered.map :refer [ordered-map]]))
 
 
