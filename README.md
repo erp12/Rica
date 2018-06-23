@@ -98,7 +98,11 @@ The below snippet finds the average cost of individual items purchased in each s
 
 ### Full API
 
+Tutorial guides and full documenation are still under constrctions, however
+the full API provided by all Rica namespaces can be found on
+[Rica's GitHub Pages site](https://erp12.github.io/Rica/index.html).
 
+Generated using [Codox](https://github.com/weavejester/codox) Leiningen plugin.
 
 ## Road Map / To Do
 
