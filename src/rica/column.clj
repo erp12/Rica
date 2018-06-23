@@ -9,7 +9,7 @@
 (defn column-type-mismatch
   [actual-dtype expected-dtype]
   (throw (Exception.
-           (str "Cannot add " (name actual-dtype) " to " (name expected-dtype) " column."))))
+           (str "Cannot add " actual-dtype " to " expected-dtype " column."))))
 
 
 (deftype Column
@@ -87,6 +87,11 @@
   (toString [self]
     (str "Column<" dtype "> " data))
   )
+
+
+(defmethod print-method Column [o ^java.io.Writer w]
+  (.write w "#rica/Column ")
+  (print-method (.data o) w))
 
 
 (defn create-column

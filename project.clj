@@ -10,5 +10,5 @@
                  [net.mikera/vectorz-clj "0.47.0"]]
   :plugins [[lein-codox "0.10.4"]]
   :codox {:output-path "docs"}
-  :main data-frame.core
+  :main rica.core
 )

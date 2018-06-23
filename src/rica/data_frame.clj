@@ -138,3 +138,12 @@
                (recur (rest remaining-attr)
                       (conj str-vec (str (attr columns)))))))))
   )
+
+
+(defmethod print-method DataFrame [o ^java.io.Writer w]
+  (.write w "#rica/DataFrame <")
+  (.write w (apply str
+                   (vec (map (fn [[k v]]
+                               (str k "(" (.dtype v) ") "))
+                             (.columns o)))))
+  (.write w ">"))
