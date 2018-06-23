@@ -1,5 +1,7 @@
 # Rica
 
+[![CircleCI](https://circleci.com/gh/erp12/Rica.svg?style=svg)](https://circleci.com/gh/erp12/Rica)
+
 Data-frame abstraction for Clojure data scientists.
 
 A Data-frame is a data structure where **r**ows are accessed by **i**ndex and **c**olumns are **a**ssociated with names. Hence the name **Rica**.
