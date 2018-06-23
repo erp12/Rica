@@ -1,4 +1,5 @@
 (ns data-frame.utils
+  "Utility functions used throughout Rica."
   (:require [flatland.ordered.map :refer [ordered-map]]))
 
 

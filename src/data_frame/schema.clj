@@ -1,4 +1,8 @@
 (ns data-frame.schema
+  "The `schema` namespace contains functions for creating data-frame schemas,
+  and checking if data structures conform to the schema. In Rica, a schema is
+  represented by a ordered-map where the keys are column names and values or
+  classes (data types)."
   (:require [flatland.ordered.map :refer [ordered-map]]))
 
 

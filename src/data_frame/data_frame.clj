@@ -1,4 +1,9 @@
 (ns data-frame.data-frame
+  "The `data-frame` namespace contains an implementation of the DataFrame type.
+  This type serves as a data structure that is indexed with respect to rows and
+  associative with respect to columns. To acheive this, the DataFrame type
+  implements the `clojure.lang.Associative` and `clojure.lang.Indexed`
+  interfaces."
   (:require [flatland.ordered.map :refer [ordered-map]]
             [data-frame.schema :as sch]
             [data-frame.column :as col])
