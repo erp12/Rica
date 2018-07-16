@@ -212,8 +212,9 @@
 (defn with-column
   "Adds a new column to the given dataframe by associating the given column
   name with the new colllection."
-  [df col-name coll]
-  (assoc df col-name coll))
+  [df col-name col-expr]
+  (let [new-col (map col-expr (seq df))]
+    (assoc df col-name new-col)))
 
 
 (defn with-column-renamed

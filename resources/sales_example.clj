@@ -21,10 +21,7 @@
 ;;
 (-> sales
     (select :amount :num-items)
-    (with-column :avg-item-cost
-                 (map #(/ %1 %2)
-                      (get-col sales :amount)
-                      (get-col sales :num-items)))
+    (with-column :avg-item-cost #(/ (:amount %) (:num-items %)))
     show)
 ; | :amount | :num-items |     :avg-item-cost |
 ; |---------+------------+--------------------|
