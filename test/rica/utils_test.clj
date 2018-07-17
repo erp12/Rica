@@ -45,12 +45,12 @@
     (is (= (coll-types [nil nil nil]) #{}))))
 
 
-(deftest rows-to-columns-standard
+(deftest rows-to-column-vecs-standard
   (testing "Return all types in collection of nils"
-    (is (= (rows-to-columns [{:a 1 :b 2} {:a 3 :b 4}])
+    (is (= (rows-to-column-vecs [{:a 1 :b 2} {:a 3 :b 4}])
            {:b [2 4] :a [1 3]}))))
 
 
-(deftest empty-rows-to-columns
+(deftest empty-rows-to-column-vecs
   (testing "Return all types in collection of nils"
-    (is (= (rows-to-columns []) {}))))
+    (is (= (rows-to-column-vecs []) {}))))
