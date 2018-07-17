@@ -1,7 +1,22 @@
 (ns rica.io
-  (:require [rica.schema :as sch]
+  (:require [clojure.java.io :refer [reader]]
+            [clojure.data.csv :as csv]
+            [rica.schema :as sch]
             [rica.column :as col]
             [rica.data-frame :as df]))
+
+
+(defn from-csv
+  "Creates a DataFrame from a csv file."
+  [filename header & args]
+  (with-open [r (reader filename)]
+    (let [csv-options (flatten (seq (select-keys '(:separator :quote))))
+          csv-contents (apply csv/read-csv r)]
+      (if header
+        (row-vecs->DataFrame (rest csv-contents)
+                             (map keyword (first csv-contents)))
+        (row-vecs->DataFrame csv-contents
+                             ())))))
 
 
 ; (defn from-csv

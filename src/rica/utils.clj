@@ -26,7 +26,7 @@
   (set (remove nil? (set (map type coll)))))
 
 
-(defn rows-to-columns
+(defn rows-to-column-vecs
   "Takes a vector of row maps and returns a map of column vectors."
   [vec-of-row-maps]
   (let [col-names (set (flatten (map #(keys %)
@@ -37,3 +37,9 @@
                          (vec (map #(k %)
                                    vec-of-row-maps)))
                        col-names)))))
+
+
+(defn transpose-vectors
+  ""
+  [nested-vectors]
+  (apply mapv vector nested-vectors))
