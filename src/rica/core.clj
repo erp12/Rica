@@ -40,21 +40,33 @@
   The set of keys found in each hash-map (row) are used to determine the column
   names of the resulting DataFrame."
   [row-maps]
-  (col-map->DataFrame (u/rows-to-columns row-maps)))
+  (col-map->DataFrame (u/rows-to-column-vecs row-maps)))
 
 
-; (defn col-vec->DataFrame
-;   "Creates a DataFrame from a vector of vectors, each corresponding to a
-;   column in the resulting DataFrame. The function also requires a collection
-;   of keywords to be used as column names."
-;   [col-vecs column-names])
-;
-;
-; (defn row-vecs->DataFrame
-;   "Creates a DataFrame from a vector of vectors, each corresponding to a
-;   row in the resulting DataFrame. The function also requires a collection
-;   of keywords to be used as column names."
-;   [row-vecs column-names])
+(defn col-vec->DataFrame
+  "Creates a DataFrame from a vector of vectors, each corresponding to a
+  column in the resulting DataFrame. The function also requires a collection
+  of keywords to be used as column names."
+  [col-vecs column-names]
+  (if (not (every? #(= (count %) (count (first col-vecs))) col-vecs))
+     (throw (Exception. "Column lengths do not match.")))
+  (let [columns (into {}
+                      (zipmap column-names
+                              (map col/create-column col-vecs)))
+        schema (ordered-map (into {}
+                                  (zipmap column-names
+                                          (map (fn [[k v]] (col/column-type v))
+                                               columns))))]
+    (dframe/->DataFrame columns schema)))
+
+
+(defn row-vecs->DataFrame
+  "Creates a DataFrame from a vector of vectors, each corresponding to a
+  row in the resulting DataFrame. The function also requires a collection
+  of keywords to be used as column names."
+  [row-vecs column-names]
+  (col-vec->DataFrame (u/transpose-vectors row-vecs)
+                      column-names))
 
 
 (defn create-data-frame
@@ -315,12 +327,12 @@
 ;;
 
 
-; (defn -main
-;   [& args]
-;   (let [df (create-data-frame :email ["alice@hmail.com" "cathy@zmail.com" "bob@ymail.com" "eddie@hmail.com" "dexter@tmail.net"]
-;                               :age [20 45 32 24 8])
-;         df2 (create-data-frame :name ["alice" "cathy" "bob" "eddie" "dexter"]
-;                                :is-customer [true false false true true])
-;         df3 (sample df 0.5)]
-;     (print-schema df3)
-;     (show df3)))
+(defn -main
+  [& args]
+  (let [df (row-vecs->DataFrame [[1 "A" true]
+                                 [2 "B" nil]
+                                 [3 "C" false]]
+                                [:my-int :my-str :my-bool])]
+    (println df)
+    (print-schema df)
+    (show df)))
