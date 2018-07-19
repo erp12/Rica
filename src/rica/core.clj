@@ -327,12 +327,12 @@
 ;;
 
 
-; (defn -main
-;   [& args]
-;   (let [df (row-vecs->DataFrame [[1 "A" true]
-;                                  [2 "B" nil]
-;                                  [3 "C" false]]
-;                                 [:my-int :my-str :my-bool])]
-;     (println df)
-;     (print-schema df)
-;     (show df)))
+(defn -main
+  [& args]
+  (let [df (row-vecs->DataFrame [[1 "A" true]
+                                 [2 "B" nil]
+                                 [3 "C" false]]
+                                [:my-int :my-str :my-bool])]
+    (println df)
+    (print-schema df)
+    (show df)))
