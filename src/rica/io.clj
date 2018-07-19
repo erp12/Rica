@@ -1,4 +1,6 @@
 (ns rica.io
+  "The io namespace contains public functions for reading and writing DataFrames
+  to and from data files and other data stores."
   (:require [clojure.java.io :refer [reader writer]]
             [clojure.data.csv :refer [read-csv write-csv]]
             [rica.core :as df]
