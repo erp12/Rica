@@ -283,14 +283,18 @@
 
 ;; Ordering
 
-;; TODO Figure out how to sort by DESC.
+;; TODO Figure out how to sort by DESC on a per column basis.
 (defn order-by
   "Returns the given data-frame with the rows ordered one or more columns."
-  [df col1 & args]
-  (->> (seq df)
-       (sort-by (apply juxt (cons col1 args)))
-       vec
-       row-maps->DataFrame))
+  [df desc? col1 & args]
+  (let [col-order (column-names df)
+        desc-func #(if desc? (reverse %) %)
+        result-df (->> (seq df)
+                       (sort-by (apply juxt (cons col1 args)))
+                       desc-func
+                       vec
+                       row-maps->DataFrame)]
+    (apply select result-df col-order)))
 
 
 ;; Joining
@@ -330,9 +334,10 @@
 (defn -main
   [& args]
   (let [df (row-vecs->DataFrame [[1 "A" true]
-                                 [2 "B" nil]
+                                 [2 nil true]
                                  [3 "C" false]]
-                                [:my-int :my-str :my-bool])]
+                                [:my-int :my-str :my-bool])
+        df (order-by df true :my-str)]
     (println df)
     (print-schema df)
     (show df)))
