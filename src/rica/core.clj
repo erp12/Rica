@@ -38,7 +38,10 @@
 (defn row-maps->DataFrame
   "Creates a DataFrame from a collection of hash maps each representing a row.
   The set of keys found in each hash-map (row) are used to determine the column
-  names of the resulting DataFrame."
+  names of the resulting DataFrame.
+
+  WARNING: When going from DataFrame to row-maps back to DataFrame using seq and
+  and row-maps->DataFrame the column order may change."
   [row-maps]
   (col-map->DataFrame (u/rows-to-column-vecs row-maps)))
 
@@ -201,9 +204,11 @@
 (defn where
   "Returns a dataframe where all rows match the given predicate."
   [df pred]
-  (->> (seq df)
-       (filter pred)
-       row-maps->DataFrame))
+  (let [col-order (column-names df)
+        result-df (->> (seq df)
+                       (filter pred)
+                       row-maps->DataFrame)]
+    (apply select result-df col-order)))
 
 
 (defn unique
