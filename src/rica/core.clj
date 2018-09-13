@@ -291,7 +291,7 @@
 (defn order-by
   "Returns the given data-frame with the rows ordered by one or more columns.
   Column names should be in the `by` vector. To sort by descending order,
-  put a `-` as the first character of the keyword denotint the column name.
+  put a `-` as the first character of the keyword denoting the column name.
   (ie. `:price` because `:-price`)"
   [df by]
   (let [col-order (column-names df)
