@@ -30,12 +30,12 @@
 
 (defn count-agg
   []
-  (fn [group] (count group)))
+  (fn [group] (long (count group))))
 
 
 (defn count-distinct-agg
   []
-  (fn [group] (count (distinct group))))
+  (fn [group] (long (count (distinct group)))))
 
 
 (defn max-agg
