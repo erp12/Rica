@@ -115,14 +115,52 @@
 
 (deftest order-by-df-desc
   (testing "Ordering data-frame by desc"
-    (is (= (order-by df1 true :a)
+    (is (= (order-by df1 true [:a])
            (dframe/->DataFrame {:a (create-column [3 2 1] Long)
                                 :b (create-column ["z" "y" "x"] String)}
                                (schema :a Long :b String))))))
 
+
 (deftest order-by-df-with-nil
   (testing "Ordering data-frame by col with nil"
-    (is (= (order-by df2 false :b)
+    (is (= (order-by df2 false [:b])
            (dframe/->DataFrame {:b (create-column [nil "x" "z"] String)
                                 :c (create-column [true false false] Boolean)}
                                (schema :b String :c Boolean))))))
+
+
+(deftest index-bag-test
+  (testing "Index into bags"
+    (is (= (index-bag [{:a 1 :b 2 :c 3}
+                       {:a 4 :b 5 :c 6}
+                       {:a 1 :b 1 :c 1}
+                       {:a 1 :b 7 :c 3}]
+                      [:a :c])
+           {{:a 1, :c 3} [{:a 1, :b 2, :c 3} {:a 1, :b 7, :c 3}],
+            {:a 4, :c 6} [{:a 4, :b 5, :c 6}],
+            {:a 1, :c 1} [{:a 1, :b 1, :c 1}]}))))
+
+
+(deftest group-agg-df
+  (testing "Group df and aggregate columns"
+    (is (= (-> (dframe/->DataFrame {:a (create-column [1 4 1 1] Long)
+                                    :b (create-column [2 5 1 7] Long)
+                                    :c (create-column [3 6 1 3] Long)}
+                                   (schema :a Long :b Long :c Long))
+               (group-agg [:a :c] {:cntd #(long (count (distinct %)))}))
+           (dframe/->DataFrame {:a (create-column [1 4 1] Long)
+                                :c (create-column [3 6 1] Long)
+                                :cntd (create-column [2 1 1] Long)}
+                               (schema :a Long :c Long :cntd Long))))))
+
+
+ (deftest just-group-df
+   (testing "Group df with no aggregation"
+     (is (= (-> (dframe/->DataFrame {:a (create-column [1 4 1 1] Long)
+                                     :b (create-column [2 5 1 7] Long)
+                                     :c (create-column [3 6 1 3] Long)}
+                                    (schema :a Long :b Long :c Long))
+                (group-agg [:a :c] {}))
+            (dframe/->DataFrame {:a (create-column [1 4 1] Long)
+                                 :c (create-column [3 6 1] Long)}
+                                (schema :a Long :c Long))))))

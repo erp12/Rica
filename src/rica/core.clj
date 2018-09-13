@@ -9,6 +9,7 @@
             [rica.schema :as sch]
             [rica.column :as col]
             [rica.data-frame :as dframe]
+            [rica.agg :as a]
             [rica.utils :as u]))
 
 
@@ -185,20 +186,19 @@
 
 (defn select
   "Returns a data-frame with only the given columns present."
-  [df col-name & args]
-  (let [all-col-names (cons col-name args)
-        new-columns (select-keys (.columns df) all-col-names)
-        new-schema (ordered-map (select-keys (.schema df) all-col-names))]
+  [df col-names]
+  (let [new-columns (select-keys (.columns df) col-names)
+        new-schema (ordered-map (select-keys (.schema df) col-names))]
     (dframe/->DataFrame new-columns new-schema)))
 
 
 (defn drop-cols
   "Returns a data-frame with the given columns removed."
-  [df col-name & args]
-  (let [col-names (set (column-names df))
-        keep-col-names (st/difference col-names
-                                      (set (cons col-name args)))]
-    (apply select df keep-col-names)))
+  [df col-names]
+  (let [current-col-names (set (column-names df))
+        keep-col-names (st/difference current-col-names
+                                      (set col-names))]
+    (select df keep-col-names)))
 
 
 (defn where
@@ -208,7 +208,7 @@
         result-df (->> (seq df)
                        (filter pred)
                        row-maps->DataFrame)]
-    (apply select result-df col-order)))
+    (select result-df col-order)))
 
 
 (defn unique
@@ -288,21 +288,24 @@
 
 ;; Ordering
 
-;; TODO Figure out how to sort by DESC on a per column basis.
+;; TODO Figure out how to sort by DESC on a per column basis. Perhaps with :-foo instead of :foo
 (defn order-by
   "Returns the given data-frame with the rows ordered one or more columns."
-  [df desc? col1 & args]
+  [df desc? by]
   (let [col-order (column-names df)
         desc-func #(if desc? (reverse %) %)
         result-df (->> (seq df)
-                       (sort-by (apply juxt (cons col1 args)))
+                       (sort-by (apply juxt by))
                        desc-func
                        vec
                        row-maps->DataFrame)]
-    (apply select result-df col-order)))
+    (select result-df col-order)))
 
 
 ;; Joining
+
+;; SEE LAST EXAMPLE: https://clojuredocs.org/clojure.set/index
+;; (into () (r/map #(r/reduce merge %) (vals (s/index (s/union ds2 ds1) [:id]))))
 
 ; (defn- inner-join-row
 ;   [row df by])
@@ -328,7 +331,33 @@
 
 
 ;; Grouping
-; See `index` in clojure.set
+
+(defn index-bag
+  "Returns a map of the values of ks in the xrel mapped to a
+  set of the maps in xrel with the corresponding values of ks. Like the `index`
+  function in `clojure.set` except return \"bags\" (lists) instead of sets. In
+  other words, it does not reduce the outputs to only the distinct values."
+  [xrel ks]
+    (reduce
+     (fn [m x]
+       (let [ik (select-keys x ks)]
+         (assoc m ik (conj (get m ik []) x))))
+     {} xrel))
+
+
+(defn group-agg
+  [df by agg-exprs]
+  (let [groups (index-bag (seq df) by)
+        bases (keys groups)
+        agg-vals (map (fn [group]
+                        (apply merge
+                               (map (fn [[result-name agg-expr]]
+                                      {result-name (agg-expr group)})
+                             agg-exprs)))
+                      (vals groups))]
+    (-> (map merge bases agg-vals)
+        row-maps->DataFrame
+        (select (concat (keys (reduce merge bases)) (keys agg-exprs))))))
 
 
 ;;
@@ -340,9 +369,16 @@
   [& args]
   (let [df (row-vecs->DataFrame [[1 "A" true]
                                  [2 nil true]
+                                 [3 "C" false]
+                                 [4 "A" false]
                                  [3 "C" false]]
                                 [:my-int :my-str :my-bool])
-        df (order-by df true :my-str)]
-    (println df)
-    (print-schema df)
-    (show df)))
+        df2 (group-agg df
+                       [:my-str :my-bool]
+                       {:cntd (a/count-distinct-agg)
+                        :cnt (a/count-agg)
+                        :sum-i (a/sum-agg :my-int)
+                        :avg-i (a/mean-agg :my-int)})]
+    (println df2)
+    (print-schema df2)
+    (show df2)))
