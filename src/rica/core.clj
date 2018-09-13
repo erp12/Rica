@@ -288,22 +288,11 @@
 
 ;; Ordering
 
-; ;; TODO Figure out how to sort by DESC on a per column basis. Perhaps with :-foo instead of :foo
-; (defn order-by
-;   "Returns the given data-frame with the rows ordered one or more columns."
-;   [df desc? by]
-;   (let [col-order (column-names df)
-;         desc-func #(if desc? (reverse %) %)
-;         result-df (->> (seq df)
-;                        (sort-by (apply juxt by))
-;                        desc-func
-;                        vec
-;                        row-maps->DataFrame)]
-;     (select result-df col-order)))
-
-
 (defn order-by
-  "Returns the given data-frame with the rows ordered by one or more columns."
+  "Returns the given data-frame with the rows ordered by one or more columns.
+  Column names should be in the `by` vector. To sort by descending order,
+  put a `-` as the first character of the keyword denotint the column name.
+  (ie. `:price` because `:-price`)"
   [df by]
   (let [col-order (column-names df)
         by-str (map u/keyword-to-str by)
