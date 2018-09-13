@@ -115,14 +115,14 @@
 
 (deftest order-by-df-desc
   (testing "Ordering data-frame by desc"
-    (is (= (order-by df1 true :a)
+    (is (= (order-by df1 true [:a])
            (dframe/->DataFrame {:a (create-column [3 2 1] Long)
                                 :b (create-column ["z" "y" "x"] String)}
                                (schema :a Long :b String))))))
 
 (deftest order-by-df-with-nil
   (testing "Ordering data-frame by col with nil"
-    (is (= (order-by df2 false :b)
+    (is (= (order-by df2 false [:b])
            (dframe/->DataFrame {:b (create-column [nil "x" "z"] String)
                                 :c (create-column [true false false] Boolean)}
                                (schema :b String :c Boolean))))))
