@@ -43,3 +43,16 @@
   ""
   [nested-vectors]
   (apply mapv vector nested-vectors))
+
+
+(defn index-bag
+  "Returns a map of the values of ks in the xrel mapped to a
+  set of the maps in xrel with the corresponding values of ks. Like the `index`
+  function in `clojure.set` except return \"bags\" (lists) instead of sets. In
+  other words, it does not reduce the outputs to only the distinct values."
+  [xrel ks]
+    (reduce
+     (fn [m x]
+       (let [ik (select-keys x ks)]
+         (assoc m ik (conj (get m ik []) x))))
+     {} xrel))

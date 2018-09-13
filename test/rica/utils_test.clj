@@ -54,3 +54,15 @@
 (deftest empty-rows-to-column-vecs
   (testing "Return all types in collection of nils"
     (is (= (rows-to-column-vecs []) {}))))
+
+
+(deftest index-bag-test
+  (testing "Index into bags"
+    (is (= (index-bag [{:a 1 :b 2 :c 3}
+                       {:a 4 :b 5 :c 6}
+                       {:a 1 :b 1 :c 1}
+                       {:a 1 :b 7 :c 3}]
+                      [:a :c])
+           {{:a 1, :c 3} [{:a 1, :b 2, :c 3} {:a 1, :b 7, :c 3}],
+            {:a 4, :c 6} [{:a 4, :b 5, :c 6}],
+            {:a 1, :c 1} [{:a 1, :b 1, :c 1}]}))))

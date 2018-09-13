@@ -288,15 +288,55 @@
 
 ;; Ordering
 
-;; TODO Figure out how to sort by DESC on a per column basis. Perhaps with :-foo instead of :foo
+; ;; TODO Figure out how to sort by DESC on a per column basis. Perhaps with :-foo instead of :foo
+; (defn order-by
+;   "Returns the given data-frame with the rows ordered one or more columns."
+;   [df desc? by]
+;   (let [col-order (column-names df)
+;         desc-func #(if desc? (reverse %) %)
+;         result-df (->> (seq df)
+;                        (sort-by (apply juxt by))
+;                        desc-func
+;                        vec
+;                        row-maps->DataFrame)]
+;     (select result-df col-order)))
+
+
 (defn order-by
-  "Returns the given data-frame with the rows ordered one or more columns."
-  [df desc? by]
+  "Returns the given data-frame with the rows ordered by one or more columns."
+  [df by]
   (let [col-order (column-names df)
-        desc-func #(if desc? (reverse %) %)
+        by-str (map u/keyword-to-str by)
+        desc? (map #(= \- (first %)) by-str)
+        by-col-names (map #(if (nth desc? %)
+                             (keyword (apply str (rest (nth by-str %))))
+                             (nth by %))
+                          (range (count by)))
+        row-comp (fn [r1 r2]
+                   (loop [ndx 0
+                          remaining1 r1
+                          remaining2 r2]
+                     (let [x (first remaining1)
+                           y (first remaining2)
+                           c (if (nth desc? ndx false)
+                               (* -1 (compare x y))
+                               (compare x y))]
+                       (cond
+                         (and (empty? remaining1) (empty? remaining2))
+                         0
+
+                         (or (empty? remaining1) (empty? remaining2))
+                         (compare (count r1) (count r2))
+
+                         (zero? c)
+                         (recur (inc ndx)
+                                (rest remaining1)
+                                (rest remaining2))
+
+                         :else
+                         c))))
         result-df (->> (seq df)
-                       (sort-by (apply juxt by))
-                       desc-func
+                       (sort-by (apply juxt by-col-names) row-comp)
                        vec
                        row-maps->DataFrame)]
     (select result-df col-order)))
@@ -332,22 +372,12 @@
 
 ;; Grouping
 
-(defn index-bag
-  "Returns a map of the values of ks in the xrel mapped to a
-  set of the maps in xrel with the corresponding values of ks. Like the `index`
-  function in `clojure.set` except return \"bags\" (lists) instead of sets. In
-  other words, it does not reduce the outputs to only the distinct values."
-  [xrel ks]
-    (reduce
-     (fn [m x]
-       (let [ik (select-keys x ks)]
-         (assoc m ik (conj (get m ik []) x))))
-     {} xrel))
+; TODO: (defn agg [df agg-exprs])
 
 
 (defn group-agg
   [df by agg-exprs]
-  (let [groups (index-bag (seq df) by)
+  (let [groups (u/index-bag (seq df) by)
         bases (keys groups)
         agg-vals (map (fn [group]
                         (apply merge
@@ -373,12 +403,7 @@
                                  [4 "A" false]
                                  [3 "C" false]]
                                 [:my-int :my-str :my-bool])
-        df2 (group-agg df
-                       [:my-str :my-bool]
-                       {:cntd (a/count-distinct-agg)
-                        :cnt (a/count-agg)
-                        :sum-i (a/sum-agg :my-int)
-                        :avg-i (a/mean-agg :my-int)})]
+        df2 (order-by df [:my-str :-my-int])]
     (println df2)
     (print-schema df2)
     (show df2)))
