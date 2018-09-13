@@ -105,13 +105,9 @@ Generated using [Codox](https://github.com/weavejester/codox) Leiningen plugin.
 
 ## Road Map / To Do
 
-If you have any requests or encounter any issues using Rica, please open a GitHub issue (or PR). A more complete contributing guide is coming soon.
+For a complete list of features being worked on, see the [project's GitHub issues](https://github.com/erp12/Rica/issues).
 
-Things which are already on the horizon:
-- [ ] CSV -> DataFrame, DataFrame -> CSV
-- [ ] DataFrame joining.
-- [ ] Grouping and Aggregation
-  - [ ] Investigate using Clojure meta-data to store grouping informaiton.
+If you have any requests or encounter any issues using Rica, please open a GitHub issue (or pull request). A more complete contributing guide is coming soon.
 
 ## License
 
