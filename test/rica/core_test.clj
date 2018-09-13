@@ -140,6 +140,7 @@
             {:a 4, :c 6} [{:a 4, :b 5, :c 6}],
             {:a 1, :c 1} [{:a 1, :b 1, :c 1}]}))))
 
+
 (deftest group-agg-df
   (testing "Group df and aggregate columns"
     (is (= (-> (dframe/->DataFrame {:a (create-column [1 4 1 1] Long)
@@ -151,3 +152,15 @@
                                 :c (create-column [3 6 1] Long)
                                 :cntd (create-column [2 1 1] Long)}
                                (schema :a Long :c Long :cntd Long))))))
+
+
+ (deftest just-group-df
+   (testing "Group df with no aggregation"
+     (is (= (-> (dframe/->DataFrame {:a (create-column [1 4 1 1] Long)
+                                     :b (create-column [2 5 1 7] Long)
+                                     :c (create-column [3 6 1 3] Long)}
+                                    (schema :a Long :b Long :c Long))
+                (group-agg [:a :c] {}))
+            (dframe/->DataFrame {:a (create-column [1 4 1] Long)
+                                 :c (create-column [3 6 1] Long)}
+                                (schema :a Long :c Long))))))
