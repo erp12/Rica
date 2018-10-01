@@ -128,6 +128,14 @@
                                 :c (create-column [true false false] Boolean)}
                                (schema :b String :c Boolean))))))
 
+(deftest agg-df
+  (testing "Aggregating DataFrame"
+    (is (= (agg df1 {:one #(apply + (map :a %))
+                     :two #(long (count (distinct %)))})
+           (dframe/->DataFrame {:one (create-column [6] Long)
+                                :two (create-column [3] Long)}
+                               (schema :one Long :two Long))))))
+
 
 (deftest group-agg-df
   (testing "Group df and aggregate columns"

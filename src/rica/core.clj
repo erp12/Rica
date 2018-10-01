@@ -361,7 +361,14 @@
 
 ;; Grouping
 
-; TODO: (defn agg [df agg-exprs])
+(defn agg
+  [df agg-exprs]
+  (let [rows (seq df)
+        agg-row (apply merge
+                        (map (fn [[result-name agg-expr]]
+                               {result-name (agg-expr rows)})
+                             agg-exprs))]
+    (row-maps->DataFrame [agg-row])))
 
 
 (defn group-agg
@@ -372,7 +379,7 @@
                         (apply merge
                                (map (fn [[result-name agg-expr]]
                                       {result-name (agg-expr group)})
-                             agg-exprs)))
+                                     agg-exprs)))
                       (vals groups))]
     (-> (map merge bases agg-vals)
         row-maps->DataFrame
@@ -392,7 +399,7 @@
                                  [4 "A" false]
                                  [3 "C" false]]
                                 [:my-int :my-str :my-bool])
-        df2 (order-by df [:my-str :-my-int])]
+        df2 (agg df {:avg-int (a/mean-agg :my-int)})]
     (println df2)
     (print-schema df2)
     (show df2)))
