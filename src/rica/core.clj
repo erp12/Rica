@@ -182,6 +182,16 @@
  (sch/print-schema (.schema df)))
 
 
+(defn tap
+  "Performs a function on a DataFrame (presumably for side effects) and then
+  returns the origional DataFrame. Useful for debugging and tracing when
+  creating pipelines with the threading macro."
+  [df func]
+  (do
+    (func df)
+    df))
+
+
  ;; Subsetting
 
 (defn select
@@ -399,7 +409,10 @@
                                  [4 "A" false]
                                  [3 "C" false]]
                                 [:my-int :my-str :my-bool])
-        df2 (agg df {:avg-int (a/mean-agg :my-int)})]
+        df2 (-> df
+                (with-column :r1 (fn [_] (rand)))
+                (tap #(println (count %)))
+                (with-column :r2 (fn [_] (rand))))]
     (println df2)
     (print-schema df2)
     (show df2)))
