@@ -40,7 +40,6 @@
 
 
 (defn transpose-vectors
-  ""
   [nested-vectors]
   (apply mapv vector nested-vectors))
 

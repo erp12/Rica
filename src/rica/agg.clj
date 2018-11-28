@@ -29,13 +29,17 @@
 ;; Common Aggregation Functions
 
 (defn count-agg
-  []
-  (fn [group] (long (count group))))
+  ([]
+    (fn [group] (long (count group))))
+  ([col-name]
+    (fn [group] (count (filter some? (map col-name group))))))
 
 
 (defn count-distinct-agg
-  []
-  (fn [group] (long (count (distinct group)))))
+  ([]
+    (fn [group] (long (count (distinct group)))))
+  ([col-name]
+    (fn [group] (count (distinct (filter some? (map col-name group)))))))
 
 
 (defn max-agg
@@ -53,7 +57,7 @@
   (fn [group] (sum-col group col-name)))
 
 
-; (defn sum-distinct-agg)
+; @TODO: (defn sum-distinct-agg)
 
 
 (defn mean-agg
@@ -62,8 +66,8 @@
     (float (/ (sum-col group col-name) (count group)))))
 
 
-; (defn stddev-agg)
-; (defn variance-agg)
+; @TODO: (defn stddev-agg)
+; @TODO: (defn variance-agg)
 
 
 (defn first-agg
@@ -74,3 +78,7 @@
 (defn last-agg
   [col-name]
   (fn [group] (last (map col-name group))))
+
+
+; @TODO: (defn collect-list-agg)
+; @TODO: (defn collect-set-agg)

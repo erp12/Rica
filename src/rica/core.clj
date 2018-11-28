@@ -10,6 +10,7 @@
             [rica.column :as col]
             [rica.data-frame :as dframe]
             [rica.agg :as a]
+            [rica.joins :as j]
             [rica.utils :as u]))
 
 
@@ -44,7 +45,9 @@
   WARNING: When going from DataFrame to row-maps back to DataFrame using seq and
   and row-maps->DataFrame the column order may change."
   [row-maps]
-  (col-map->DataFrame (u/rows-to-column-vecs row-maps)))
+  (if (empty? row-maps)
+    (dframe/->DataFrame [] {})
+    (col-map->DataFrame (u/rows-to-column-vecs row-maps))))
 
 
 (defn col-vec->DataFrame
@@ -77,6 +80,12 @@
   "Creates a dataframe."
   [col-name col-data & args]
   (col-map->DataFrame (apply ordered-map col-name col-data args)))
+
+
+(defn empty-data-frame
+  "Creates an empty dataframe of the given schema."
+  [schema]
+  (dframe/->DataFrame [] schema))
 
 
 ;; DataFrame to X
@@ -157,9 +166,7 @@
 (defn tail
   "Returns a DataFrame the last n rows of a DataFrame."
   [df n]
-  (row-range df
-             (max 0 (- (n-row df) n))
-             (n-row df)))
+  (row-range df (max 0 (- (n-row df) n)) (n-row df)))
 
 
 ;; Printing
@@ -182,14 +189,12 @@
  (sch/print-schema (.schema df)))
 
 
-(defn tap
+(defn touch
   "Performs a function on a DataFrame (presumably for side effects) and then
   returns the origional DataFrame. Useful for debugging and tracing when
   creating pipelines with the threading macro."
   [df func]
-  (do
-    (func df)
-    df))
+  (do (func df) df))
 
 
  ;; Subsetting
@@ -343,30 +348,18 @@
 
 ;; Joining
 
-;; SEE LAST EXAMPLE: https://clojuredocs.org/clojure.set/index
-;; (into () (r/map #(r/reduce merge %) (vals (s/index (s/union ds2 ds1) [:id]))))
+(defn join
+  ([left-df right-df join-on]
+    (join left-df right-df join-on "inner"))
+  ([left-df right-df join-on join-type]
+    (let [join-fn (j/find-join-fn join-on join-type)
+          result-rows (join-fn left-df right-df)]
+      (row-maps->DataFrame result-rows))))
 
-; (defn- inner-join-row
-;   [row df by])
-;
-;
-; (defn- left-join-row
-;   [row df by])
-;
-;
-; (defn- right-join-row
-;   [row df by])
-;
-;
-; (defn- anti-join-row
-;   [row df2 by])
-;
-;
-; (defn join
-;   ([df1 df2 by]
-;     (join df1 df2 by :inner))
-;   ([df1 df2 by type]
-;     (loop [])))
+
+(defn cross-join
+  [df1 df2]
+  (join df1 df2 (fn [l r] true) "cross"))
 
 
 ;; Grouping
@@ -401,18 +394,24 @@
 ;;
 
 
+; (defn -main
+;   [& args]
+;   (let [df (create-data-frame :foo [1 2 3 2 1]
+;                               :bar [5 4 3 2 1]
+;                               :baz [1 1 2 2 3])
+;         _ (j/create-hash-table df [:foo])]
+;     (println _)))
+
+
 (defn -main
   [& args]
-  (let [df (row-vecs->DataFrame [[1 "A" true]
-                                 [2 nil true]
-                                 [3 "C" false]
-                                 [4 "A" false]
-                                 [3 "C" false]]
-                                [:my-int :my-str :my-bool])
-        df2 (-> df
-                (with-column :r1 (fn [_] (rand)))
-                (tap #(println (count %)))
-                (with-column :r2 (fn [_] (rand))))]
-    (println df2)
-    (print-schema df2)
-    (show df2)))
+  (let [df1 (create-data-frame :my-int [1 2 2]
+                               :my-bool [true true false])
+        df2 (create-data-frame :my-int [2 3 3 4]
+                               :my-str ["a" "b" "c" "d"])
+        _ (join df1 df2 [:my-int])
+    ]
+    (println "===================================")
+    (println _)
+    (print-schema _)
+    (show _)))

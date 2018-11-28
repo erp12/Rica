@@ -12,3 +12,7 @@
   :codox {:output-path "docs"}
   :main rica.core
 )
+
+; @TODO: Agg namespace tests.
+; @TODO: Finish core tests.
+; @TODO: Docstrings for all public functions.
